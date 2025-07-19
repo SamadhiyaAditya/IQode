@@ -1,0 +1,64 @@
+.timer {
+  position: relative;
+  width: 100%;
+  max-width: 200px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: var(--background-light);
+  overflow: hidden;
+}
+
+.timer-display {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  z-index: 2;
+  color: var(--text-color);
+}
+
+.timer-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 1s linear;
+  z-index: 1;
+  opacity: 0.3;
+}
+
+.timer.timer-warning .timer-progress {
+  background-color: var(--warning-color);
+}
+
+.timer.timer-critical .timer-progress {
+  background-color: var(--danger-color);
+  animation: pulse 1s infinite;
+}
+
+.timer.timer-warning .timer-display {
+  color: var(--warning-color);
+}
+
+.timer.timer-critical .timer-display {
+  color: var(--danger-color);
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}

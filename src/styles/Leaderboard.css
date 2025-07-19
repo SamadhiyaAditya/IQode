@@ -1,0 +1,146 @@
+.leaderboard-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.leaderboard-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.leaderboard-header h2 {
+  color: #4a6bff;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+body.dark-mode .leaderboard-header h2 {
+  color: #6c8eff;
+}
+
+.leaderboard-header p {
+  color: #666;
+}
+
+body.dark-mode .leaderboard-header p {
+  color: #b0b0b0;
+}
+
+.leaderboard-table {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .leaderboard-table {
+  background-color: #1a1a1a;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 100px 100px;
+  padding: 15px 20px;
+  align-items: center;
+}
+
+.leaderboard-row:not(.header) {
+  border-top: 1px solid #e1e4e8;
+}
+
+body.dark-mode .leaderboard-row:not(.header) {
+  border-top-color: #444;
+}
+
+.leaderboard-row.header {
+  background-color: #f5f7fa;
+  font-weight: 600;
+  color: #333;
+}
+
+body.dark-mode .leaderboard-row.header {
+  background-color: #2a2a2a;
+  color: #e1e1e1;
+}
+
+.leaderboard-row.top-rank {
+  background-color: rgba(74, 107, 255, 0.05);
+}
+
+.rank {
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.username {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #4a6bff;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.score {
+  text-align: center;
+  font-weight: 600;
+  color: #4a6bff;
+}
+
+body.dark-mode .score {
+  color: #6c8eff;
+}
+
+.quizzes {
+  text-align: center;
+}
+
+.no-data {
+  padding: 30px;
+  text-align: center;
+  color: #666;
+}
+
+body.dark-mode .no-data {
+  color: #b0b0b0;
+}
+
+.leaderboard-loading,
+.leaderboard-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+  text-align: center;
+}
+
+.leaderboard-error h2 {
+  color: #dc3545;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+  .leaderboard-row {
+    grid-template-columns: 50px 1fr 70px 70px;
+    padding: 12px 15px;
+    font-size: 0.9rem;
+  }
+
+  .user-avatar {
+    width: 25px;
+    height: 25px;
+    font-size: 0.8rem;
+  }
+}

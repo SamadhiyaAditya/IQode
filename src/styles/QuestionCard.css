@@ -1,0 +1,116 @@
+.question-card {
+  background-color: var(--background-color);
+  border-radius: var(--border-radius);
+  padding: 20px;
+}
+
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.question-number {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.question-text {
+  font-size: 1.3rem;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.option:hover {
+  background-color: var(--background-light);
+  border-color: var(--primary-color);
+}
+
+.option.selected {
+  background-color: rgba(74, 107, 255, 0.1);
+  border-color: var(--primary-color);
+}
+
+.option.correct {
+  background-color: rgba(40, 167, 69, 0.1);
+  border-color: var(--success-color);
+}
+
+.option.incorrect {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-color: var(--danger-color);
+}
+
+.option-letter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  background-color: var(--background-light);
+  border-radius: 50%;
+  margin-right: 15px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.option-text {
+  flex: 1;
+}
+
+.question-feedback {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: var(--border-radius);
+}
+
+.correct-feedback {
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.incorrect-feedback {
+  color: var(--danger-color);
+  font-weight: 600;
+}
+
+pre {
+  background-color: var(--background-light);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  overflow-x: auto;
+  margin: 10px 0;
+  font-family: monospace;
+}
+
+code {
+  font-family: monospace;
+}
+
+@media (max-width: 768px) {
+  .question-text {
+    font-size: 1.1rem;
+  }
+
+  .option {
+    padding: 12px;
+  }
+}

@@ -1,0 +1,80 @@
+.category-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: #333;
+  height: 100%;
+}
+
+body.dark-mode .category-card {
+  background-color: #1a1a1a;
+  color: #e1e1e1;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .category-card:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.category-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.category-title {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: #4a6bff;
+}
+
+body.dark-mode .category-title {
+  color: #6c8eff;
+}
+
+.category-description {
+  color: #666;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+body.dark-mode .category-description {
+  color: #b0b0b0;
+}
+
+.category-difficulty {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+.difficulty-easy {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.difficulty-medium {
+  color: #ffc107;
+  font-weight: 600;
+}
+
+.difficulty-hard {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.difficulty-expert {
+  color: #9c27b0;
+  font-weight: 600;
+}
