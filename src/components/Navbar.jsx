@@ -13,19 +13,19 @@ function Navbar() {
   const [userProfile, setUserProfile] = useState(null)
 
   useEffect(() => {
+    const loadUserProfile = async () => {
+      try {
+        const profile = await getUserProfile(currentUser.uid)
+        setUserProfile(profile)
+      } catch (error) {
+        console.error("Error loading user profile:", error)
+      }
+    }
+
     if (currentUser) {
       loadUserProfile()
     }
   }, [currentUser])
-
-  const loadUserProfile = async () => {
-    try {
-      const profile = await getUserProfile(currentUser.uid)
-      setUserProfile(profile)
-    } catch (error) {
-      console.error("Error loading user profile:", error)
-    }
-  }
 
   const handleLogout = async () => {
     try {

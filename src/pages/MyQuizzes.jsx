@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "../contexts/AuthContext"
 import QuizCreator from "../components/QuizCreator"
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore"
@@ -12,13 +12,7 @@ function MyQuizzes() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("all")
 
-  useEffect(() => {
-    if (currentUser) {
-      loadMyQuizzes()
-    }
-  }, [currentUser])
-
-  const loadMyQuizzes = async () => {
+  const loadMyQuizzes = useCallback(async () => {
     try {
       setLoading(true)
       const q = query(
@@ -41,7 +35,13 @@ function MyQuizzes() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [currentUser])
+
+  useEffect(() => {
+    if (currentUser) {
+      loadMyQuizzes()
+    }
+  }, [currentUser, loadMyQuizzes])
 
   const getFilteredQuizzes = () => {
     if (activeTab === "all") return myQuizzes

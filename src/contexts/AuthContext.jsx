@@ -21,20 +21,16 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   async function signup(email, password, username) {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-      // Create user profile in Firestore
-      await setDoc(doc(db, "users", userCredential.user.uid), {
-        username,
-        email,
-        createdAt: new Date().toISOString(),
-        isAdmin: false,
-        isActive: true,
-      })
-      return userCredential
-    } catch (error) {
-      throw error
-    }
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+    // Create user profile in Firestore
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      username,
+      email,
+      createdAt: new Date().toISOString(),
+      isAdmin: false,
+      isActive: true,
+    })
+    return userCredential
   }
 
   function login(email, password) {
@@ -46,28 +42,24 @@ export function AuthProvider({ children }) {
   }
 
   async function signInWithGoogle() {
-    try {
-      const provider = new GoogleAuthProvider()
-      const result = await signInWithPopup(auth, provider)
+    const provider = new GoogleAuthProvider()
+    const result = await signInWithPopup(auth, provider)
 
-      // Check if user document exists
-      const userDoc = await getDoc(doc(db, "users", result.user.uid))
+    // Check if user document exists
+    const userDoc = await getDoc(doc(db, "users", result.user.uid))
 
-      // If not, create a new user profile
-      if (!userDoc.exists()) {
-        await setDoc(doc(db, "users", result.user.uid), {
-          username: result.user.displayName || "User",
-          email: result.user.email,
-          createdAt: new Date().toISOString(),
-          isAdmin: false,
-          isActive: true,
-        })
-      }
-
-      return result
-    } catch (error) {
-      throw error
+    // If not, create a new user profile
+    if (!userDoc.exists()) {
+      await setDoc(doc(db, "users", result.user.uid), {
+        username: result.user.displayName || "User",
+        email: result.user.email,
+        createdAt: new Date().toISOString(),
+        isAdmin: false,
+        isActive: true,
+      })
     }
+
+    return result
   }
 
   useEffect(() => {

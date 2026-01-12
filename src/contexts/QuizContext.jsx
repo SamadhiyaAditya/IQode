@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useReducer } from "react"
+import { createContext, useContext, useReducer } from "react"
 
 const QuizContext = createContext()
 
@@ -35,7 +35,7 @@ function quizReducer(state, action) {
         quizId: action.payload.quizId || null,
         isCustomQuiz: action.payload.isCustomQuiz || false,
       }
-    case "ANSWER_QUESTION":
+    case "ANSWER_QUESTION": {
       const isCorrect = state.questions[state.currentQuestionIndex].correctAnswer === action.payload
       return {
         ...state,
@@ -49,13 +49,15 @@ function quizReducer(state, action) {
           },
         ],
       }
-    case "NEXT_QUESTION":
+    }
+    case "NEXT_QUESTION": {
       const isLastQuestion = state.currentQuestionIndex === state.questions.length - 1
       return {
         ...state,
         currentQuestionIndex: state.currentQuestionIndex + 1,
         quizFinished: isLastQuestion,
       }
+    }
     case "PREVIOUS_QUESTION":
       return {
         ...state,
@@ -80,8 +82,6 @@ function quizReducer(state, action) {
 
 export function QuizProvider({ children }) {
   const [state, dispatch] = useReducer(quizReducer, initialState)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
 
   // Start a quiz with selected category
   const startQuiz = (category, questions, timeLimit = 600, quizId = null, isCustomQuiz = false) => {
@@ -136,9 +136,11 @@ export function QuizProvider({ children }) {
     updateTime,
     finishQuiz,
     resetQuiz,
-    loading,
-    error,
+    loading: false,
+    error: null,
   }
 
   return <QuizContext.Provider value={value}>{children}</QuizContext.Provider>
 }
+
+

@@ -16,6 +16,58 @@ function Home() {
   const [allBuiltInQuestions, setAllBuiltInQuestions] = useState([])
 
   useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const categoriesData = await getAllCategories()
+        setCategories(categoriesData)
+      } catch (error) {
+        console.error("Error loading categories:", error)
+      }
+    }
+
+    const loadApprovedQuizzes = async () => {
+      try {
+        const q = query(collection(db, "userQuizzes"), where("status", "==", "approved"), where("isActive", "!=", false))
+        const querySnapshot = await getDocs(q)
+        const quizzes = []
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data()
+          quizzes.push({ id: doc.id, ...data, type: "custom" })
+        })
+
+        setApprovedQuizzes(quizzes)
+      } catch (error) {
+        console.error("Error loading approved quizzes:", error)
+      }
+    }
+
+    const loadAllBuiltInQuestions = async () => {
+      try {
+        const allQuestions = []
+        const categoryNames = ["javascript", "react", "htmlcss", "dsa", "backend", "coding"]
+
+        for (const category of categoryNames) {
+          try {
+            const questions = await getQuizQuestions(category, null, 50)
+            questions.forEach((question) => {
+              allQuestions.push({
+                ...question,
+                category,
+                type: "builtin",
+              })
+            })
+          } catch (error) {
+            console.error(`Error loading ${category} questions:`, error)
+          }
+        }
+
+        setAllBuiltInQuestions(allQuestions)
+      } catch (error) {
+        console.error("Error loading built-in questions:", error)
+      }
+    }
+
     loadCategories()
     loadApprovedQuizzes()
     loadAllBuiltInQuestions()
@@ -23,119 +75,67 @@ function Home() {
 
   // Real-time search as user types
   useEffect(() => {
+    const performSearch = async (term) => {
+      try {
+        setLoading(true)
+        const searchTerm = term.toLowerCase()
+        const results = []
+
+        // Search in approved user-created quizzes
+        const customQuizResults = approvedQuizzes.filter(
+          (quiz) =>
+            quiz.title.toLowerCase().includes(searchTerm) ||
+            quiz.description?.toLowerCase().includes(searchTerm) ||
+            quiz.category.toLowerCase().includes(searchTerm) ||
+            quiz.tags?.some((tag) => tag.toLowerCase().includes(searchTerm)),
+        )
+
+        // Search in built-in questions
+        const builtInResults = allBuiltInQuestions.filter(
+          (question) =>
+            question.text.toLowerCase().includes(searchTerm) ||
+            question.category.toLowerCase().includes(searchTerm) ||
+            question.tags?.some((tag) => tag.toLowerCase().includes(searchTerm)),
+        )
+
+        // Group built-in questions by category for display
+        const groupedBuiltIn = {}
+        builtInResults.forEach((question) => {
+          if (!groupedBuiltIn[question.category]) {
+            groupedBuiltIn[question.category] = {
+              id: `builtin-${question.category}`,
+              title: `${question.category.charAt(0).toUpperCase() + question.category.slice(1)} Questions`,
+              description: `Built-in ${question.category} questions matching your search`,
+              category: question.category,
+              type: "builtin",
+              questionCount: 0,
+              matchingQuestions: [],
+            }
+          }
+          groupedBuiltIn[question.category].questionCount++
+          groupedBuiltIn[question.category].matchingQuestions.push(question)
+        })
+
+        results.push(...customQuizResults)
+        results.push(...Object.values(groupedBuiltIn))
+
+        setSearchResults(results)
+        setShowResults(true)
+      } catch (error) {
+        console.error("Error searching:", error)
+        setSearchResults([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
     if (searchTerm.trim()) {
       performSearch(searchTerm)
     } else {
       setSearchResults([])
       setShowResults(false)
     }
-  }, [searchTerm])
-
-  const loadCategories = async () => {
-    try {
-      const categoriesData = await getAllCategories()
-      setCategories(categoriesData)
-    } catch (error) {
-      console.error("Error loading categories:", error)
-    }
-  }
-
-  const loadApprovedQuizzes = async () => {
-    try {
-      const q = query(collection(db, "userQuizzes"), where("status", "==", "approved"), where("isActive", "!=", false))
-      const querySnapshot = await getDocs(q)
-      const quizzes = []
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data()
-        quizzes.push({ id: doc.id, ...data, type: "custom" })
-      })
-
-      setApprovedQuizzes(quizzes)
-    } catch (error) {
-      console.error("Error loading approved quizzes:", error)
-    }
-  }
-
-  const loadAllBuiltInQuestions = async () => {
-    try {
-      const allQuestions = []
-      const categoryNames = ["javascript", "react", "htmlcss", "dsa", "backend", "coding"]
-
-      for (const category of categoryNames) {
-        try {
-          const questions = await getQuizQuestions(category, null, 50)
-          questions.forEach((question) => {
-            allQuestions.push({
-              ...question,
-              category,
-              type: "builtin",
-            })
-          })
-        } catch (error) {
-          console.error(`Error loading ${category} questions:`, error)
-        }
-      }
-
-      setAllBuiltInQuestions(allQuestions)
-    } catch (error) {
-      console.error("Error loading built-in questions:", error)
-    }
-  }
-
-  const performSearch = async (term) => {
-    try {
-      setLoading(true)
-      const searchTerm = term.toLowerCase()
-      const results = []
-
-      // Search in approved user-created quizzes
-      const customQuizResults = approvedQuizzes.filter(
-        (quiz) =>
-          quiz.title.toLowerCase().includes(searchTerm) ||
-          quiz.description?.toLowerCase().includes(searchTerm) ||
-          quiz.category.toLowerCase().includes(searchTerm) ||
-          quiz.tags?.some((tag) => tag.toLowerCase().includes(searchTerm)),
-      )
-
-      // Search in built-in questions
-      const builtInResults = allBuiltInQuestions.filter(
-        (question) =>
-          question.text.toLowerCase().includes(searchTerm) ||
-          question.category.toLowerCase().includes(searchTerm) ||
-          question.tags?.some((tag) => tag.toLowerCase().includes(searchTerm)),
-      )
-
-      // Group built-in questions by category for display
-      const groupedBuiltIn = {}
-      builtInResults.forEach((question) => {
-        if (!groupedBuiltIn[question.category]) {
-          groupedBuiltIn[question.category] = {
-            id: `builtin-${question.category}`,
-            title: `${question.category.charAt(0).toUpperCase() + question.category.slice(1)} Questions`,
-            description: `Built-in ${question.category} questions matching your search`,
-            category: question.category,
-            type: "builtin",
-            questionCount: 0,
-            matchingQuestions: [],
-          }
-        }
-        groupedBuiltIn[question.category].questionCount++
-        groupedBuiltIn[question.category].matchingQuestions.push(question)
-      })
-
-      results.push(...customQuizResults)
-      results.push(...Object.values(groupedBuiltIn))
-
-      setSearchResults(results)
-      setShowResults(true)
-    } catch (error) {
-      console.error("Error searching:", error)
-      setSearchResults([])
-    } finally {
-      setLoading(false)
-    }
-  }
+  }, [searchTerm, approvedQuizzes, allBuiltInQuestions])
 
   const groupQuizzesByCategory = () => {
     const grouped = {}

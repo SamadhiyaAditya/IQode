@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"
+// Imports
+import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "../contexts/AuthContext"
 import { getPendingQuizzes, approveQuiz, rejectQuiz, getUserProfile } from "../services/firebaseService"
 import { collection, query, orderBy, getDocs, doc, updateDoc, serverTimestamp } from "firebase/firestore"
@@ -6,6 +7,7 @@ import { db } from "../firebase/config"
 import "../styles/AdminPanel.css"
 
 function AdminPanel() {
+  // get the cuurently logged in user
   const { currentUser } = useAuth()
   const [activeTab, setActiveTab] = useState("pending")
   const [pendingQuizzes, setPendingQuizzes] = useState([])
@@ -13,30 +15,16 @@ function AdminPanel() {
   const [loading, setLoading] = useState(false)
   const [userProfile, setUserProfile] = useState(null)
 
-  useEffect(() => {
-    if (currentUser) {
-      loadUserProfile()
-    }
-  }, [currentUser])
-
-  useEffect(() => {
-    if (activeTab === "pending") {
-      loadPendingQuizzes()
-    } else if (activeTab === "history") {
-      loadRequestHistory()
-    }
-  }, [activeTab])
-
-  const loadUserProfile = async () => {
+  const loadUserProfile = useCallback(async () => {
     try {
       const profile = await getUserProfile(currentUser.uid)
       setUserProfile(profile)
     } catch (error) {
       console.error("Error loading user profile:", error)
     }
-  }
+  }, [currentUser])
 
-  const loadPendingQuizzes = async () => {
+  const loadPendingQuizzes = useCallback(async () => {
     try {
       setLoading(true)
       const quizzes = await getPendingQuizzes()
@@ -46,9 +34,9 @@ function AdminPanel() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const loadRequestHistory = async () => {
+  const loadRequestHistory = useCallback(async () => {
     try {
       setLoading(true)
       const q = query(collection(db, "userQuizzes"), orderBy("createdAt", "desc"))
@@ -66,7 +54,21 @@ function AdminPanel() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (currentUser) {
+      loadUserProfile()
+    }
+  }, [currentUser, loadUserProfile])
+
+  useEffect(() => {
+    if (activeTab === "pending") {
+      loadPendingQuizzes()
+    } else if (activeTab === "history") {
+      loadRequestHistory()
+    }
+  }, [activeTab, loadPendingQuizzes, loadRequestHistory])
 
   const handleApproveQuiz = async (quizId) => {
     try {

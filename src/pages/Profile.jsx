@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "../contexts/AuthContext"
 import { getUserProfile, updateUserProfile, uploadFile } from "../services/firebaseService"
 import "../styles/Profile.css"
@@ -17,13 +17,7 @@ function Profile() {
   })
   const [uploading, setUploading] = useState(false)
 
-  useEffect(() => {
-    if (currentUser) {
-      fetchUserProfile()
-    }
-  }, [currentUser])
-
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = useCallback(async () => {
     try {
       setLoading(true)
       const profile = await getUserProfile(currentUser.uid)
@@ -40,7 +34,13 @@ function Profile() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [currentUser])
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchUserProfile()
+    }
+  }, [currentUser, fetchUserProfile])
 
   const handleEditSubmit = async (e) => {
     e.preventDefault()

@@ -12,62 +12,62 @@ function CategoryQuizzes() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    const loadQuizzes = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        // Load built-in quizzes
+        const builtInQuestions = await getQuizQuestions(category, null, 50)
+        if (builtInQuestions.length > 0) {
+
+          setBuiltInQuizzes([
+            {
+              id: `builtin-${category}`,
+              title: `${category.charAt(0).toUpperCase() + category.slice(1)} Quiz`,
+              description: `Test your knowledge of ${category} with our comprehensive built-in quiz.`,
+              category: category,
+              difficulty: "mixed",
+              questionCount: builtInQuestions.length,
+              timeLimit: 10,
+              type: "builtin",
+              tags: ["built-in", category],
+            },
+          ])
+        }
+
+        // Load community quizzes
+        const q = query(
+          collection(db, "userQuizzes"),
+          where("category", "==", category),
+          where("status", "==", "approved"),
+          where("isActive", "!=", false),
+        )
+
+        const querySnapshot = await getDocs(q)
+        const communityQuizList = []
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data()
+          communityQuizList.push({
+            id: doc.id,
+            ...data,
+            type: "community",
+            questionCount: data.questions?.length || 0,
+          })
+        })
+
+        setCommunityQuizzes(communityQuizList)
+      } catch (err) {
+        console.error("Error loading quizzes:", err)
+        setError("Failed to load quizzes")
+      } finally {
+        setLoading(false)
+      }
+    }
+
     loadQuizzes()
   }, [category])
-
-  const loadQuizzes = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-
-      // Load built-in quizzes
-      const builtInQuestions = await getQuizQuestions(category, null, 50)
-      if (builtInQuestions.length > 0) {
-
-        setBuiltInQuizzes([
-          {
-            id: `builtin-${category}`,
-            title: `${category.charAt(0).toUpperCase() + category.slice(1)} Quiz`,
-            description: `Test your knowledge of ${category} with our comprehensive built-in quiz.`,
-            category: category,
-            difficulty: "mixed",
-            questionCount: builtInQuestions.length,
-            timeLimit: 10,
-            type: "builtin",
-            tags: ["built-in", category],
-          },
-        ])
-      }
-
-      // Load community quizzes
-      const q = query(
-        collection(db, "userQuizzes"),
-        where("category", "==", category),
-        where("status", "==", "approved"),
-        where("isActive", "!=", false),
-      )
-
-      const querySnapshot = await getDocs(q)
-      const communityQuizList = []
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data()
-        communityQuizList.push({
-          id: doc.id,
-          ...data,
-          type: "community",
-          questionCount: data.questions?.length || 0,
-        })
-      })
-
-      setCommunityQuizzes(communityQuizList)
-    } catch (err) {
-      console.error("Error loading quizzes:", err)
-      setError("Failed to load quizzes")
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {

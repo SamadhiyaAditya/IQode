@@ -18,35 +18,36 @@ function Results() {
       navigate("/")
       return
     }
+
+    const saveResult = async () => {
+      try {
+        setSaving(true)
+        console.log("Saving quiz result...")
+
+        const quizData = {
+          category: currentCategory,
+          score: score,
+          totalQuestions: questions.length,
+          answers: answers,
+          quizId: quizId,
+          isCustomQuiz: isCustomQuiz,
+          completedAt: new Date().toISOString(),
+        }
+
+        await saveQuizResult(currentUser.uid, quizData)
+        setSaved(true)
+        console.log("Quiz result saved successfully")
+      } catch (error) {
+        console.error("Error saving quiz result:", error)
+      } finally {
+        setSaving(false)
+      }
+    }
+
     if (currentUser && quizFinished && !saved && !saving) {
       saveResult()
     }
-  }, [quizFinished, questions, navigate, currentUser, saved, saving])
-
-  const saveResult = async () => {
-    try {
-      setSaving(true)
-      console.log("Saving quiz result...")
-
-      const quizData = {
-        category: currentCategory,
-        score: score,
-        totalQuestions: questions.length,
-        answers: answers,
-        quizId: quizId,
-        isCustomQuiz: isCustomQuiz,
-        completedAt: new Date().toISOString(),
-      }
-
-      await saveQuizResult(currentUser.uid, quizData)
-      setSaved(true)
-      console.log("Quiz result saved successfully")
-    } catch (error) {
-      console.error("Error saving quiz result:", error)
-    } finally {
-      setSaving(false)
-    }
-  }
+  }, [quizFinished, questions, navigate, currentUser, saved, saving, currentCategory, score, answers, quizId, isCustomQuiz])
 
   const handleTryAgain = () => {
     resetQuiz()
@@ -63,7 +64,7 @@ function Results() {
   }
 
   if (!quizFinished && questions.length === 0) {
-    return null 
+    return null
   }
 
   const calculatePercentage = () => {
@@ -126,7 +127,7 @@ function Results() {
               <QuestionCard
                 question={question}
                 options={question.options}
-                onAnswer={() => {}}
+                onAnswer={() => { }}
                 questionNumber={index + 1}
                 totalQuestions={questions.length}
                 userAnswer={userAnswer}

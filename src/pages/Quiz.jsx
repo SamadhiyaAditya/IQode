@@ -13,9 +13,7 @@ function Quiz() {
     startQuiz,
     currentQuestionIndex,
     questions,
-    quizStarted,
     quizFinished,
-    score,
     answers,
     answerQuestion,
     nextQuestion,
@@ -53,7 +51,7 @@ function Quiz() {
 
     resetQuiz()
     loadQuestions()
-  }, [category])
+  }, [category, resetQuiz, startQuiz])
 
   const handleTimeUp = () => {
     finishQuiz()

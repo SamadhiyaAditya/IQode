@@ -14,9 +14,7 @@ function CustomQuiz() {
     startQuiz,
     currentQuestionIndex,
     questions,
-    quizStarted,
     quizFinished,
-    score,
     answers,
     answerQuestion,
     nextQuestion,
@@ -73,7 +71,7 @@ function CustomQuiz() {
     // Reset quiz
     resetQuiz()
     loadQuiz()
-  }, [quizId])
+  }, [quizId, resetQuiz, startQuiz])
 
   const handleTimeUp = () => {
     finishQuiz()
